@@ -25,3 +25,7 @@ Requirements:
 5. `$ npm start`
 
 The server will now be listening on port x.
+
+## Design Decisions
+
+I decided to batch process the input. This is because fanning out to insert everything at once causes an out of memory error, and trying to collect everything for a bulk insert was causing issues with the query builder. I also made sure to keep the latest user name for each user because those can change over time.

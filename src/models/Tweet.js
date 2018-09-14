@@ -1,6 +1,8 @@
 const { Model } = require('objection');
 
-class Tweet extends Model {
+const { BaseModel } = require('./BaseModel');
+
+class Tweet extends BaseModel {
   static get tableName() {
     return 'tweets';
   }
@@ -11,7 +13,7 @@ class Tweet extends Model {
       required: [
         'createdAt',
         'favoriteCount',
-        'id',
+        'tweetId',
         'isRetweet',
         'retweetCount',
         'text',
@@ -25,6 +27,7 @@ class Tweet extends Model {
         isRetweet: { type: 'boolean' },
         retweetCount: { type: 'integer' },
         text: { type: 'string', minLength: 1, maxLength: 255 },
+        tweetId: { type: 'bigInteger' },
         userId: { type: 'integer' },
       },
     };

@@ -1,2 +1,2 @@
 node_modules
-fixtures/chelsea_twitter.json
+fixtures/*.json

@@ -1,6 +1,8 @@
 const { Model } = require('objection');
 
-class User extends Model {
+const { BaseModel } = require('./BaseModel');
+
+class User extends BaseModel {
   static get tableName() {
     return 'users';
   }
@@ -16,7 +18,7 @@ class User extends Model {
       properties: {
         id: { type: 'integer' },
         screenName: { type: 'string', minLength: 1, maxLength: 255 },
-        userName: { type: 'string', minLength: 1, maxLength: 255 },
+        userName: { type: 'string', maxLength: 255 },
       },
     };
   }
