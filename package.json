@@ -6,9 +6,9 @@
   "scripts": {
     "db:create": "createdb twitter_api_dev",
     "db:import": "node scripts/import.js",
-    "db:schema": "node scripts/import.js",
+    "db:migrate": "knex migrate:latest",
     "start": "node src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "twitter",
@@ -18,11 +18,21 @@
   "author": "Konrad Schultz",
   "license": "GPL-3.0",
   "repository": {
-    "type" : "git",
-    "url" : "https://gitlab.com/kraical/twitter-api"
+    "type": "git",
+    "url": "https://gitlab.com/kraical/twitter-api"
   },
   "engines": {
     "node": ">=10.0.0",
     "npm": ">=6.0.0"
+  },
+  "devDependencies": {
+    "eslint": "5.5.0",
+    "eslint-config-airbnb-base": "13.1.0",
+    "eslint-plugin-import": "2.14.0"
+  },
+  "dependencies": {
+    "knex": "0.15.2",
+    "objection": "1.2.6",
+    "pg": "7.4.3"
   }
 }
