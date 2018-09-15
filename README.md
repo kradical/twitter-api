@@ -24,7 +24,7 @@ Requirements:
 4. `$ npm run db:import`
 5. `$ npm start`
 
-The server will now be listening on port x.
+The server will now be listening on port 3000.
 
 ## Design Decisions
 
