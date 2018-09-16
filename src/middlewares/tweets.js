@@ -40,7 +40,8 @@ const parseTweetQueryRequest = (req, res, next) => {
 const setupTweetQuery = (req, res, next) => {
   req.tweetQuery = Tweet
     .query()
-    .page(req.page, req.limit);
+    .page(req.page, req.limit)
+    .orderBy('createdAt');
 
   if (typeof req.retweetCount === 'number') {
     req.tweetQuery.where('retweetCount', '>', req.retweetCount);

@@ -48,6 +48,13 @@ class Tweet extends BaseModel {
       },
     };
   }
+
+  $formatJson(json) {
+    return {
+      ...super.$formatJson(json),
+      _search: undefined,
+    };
+  }
 }
 
 module.exports = Tweet;

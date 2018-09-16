@@ -1,3 +1,8 @@
+// Entry point into our server
+
+// Default to development environment
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+
 const express = require('express');
 
 // init/bind knex
@@ -23,3 +28,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(3000);
+
+module.exports = app;

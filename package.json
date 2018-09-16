@@ -7,11 +7,12 @@
     "db:clean": "npm run db:drop && npm run db:create && npm run db:migrate",
     "db:create": "createdb twitter_api_dev",
     "db:create-migration": "knex migrate:make",
-    "db:drop": "dropdb twitter_api_dev",
+    "db:drop": "dropdb twitter_api_dev --if-exists",
     "db:import": "node scripts/db/import.js",
     "db:migrate": "knex migrate:latest",
     "start": "nodemon --exec node src/app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test:createdb": "",
+    "test": "dropdb twitter_api_test --if-exists && createdb twitter_api_test && NODE_ENV=test knex migrate:latest && NODE_ENV=test mocha --recursive"
   },
   "keywords": [
     "twitter",
@@ -29,9 +30,12 @@
     "npm": ">=6.0.0"
   },
   "devDependencies": {
+    "chai": "4.1.2",
+    "chai-http": "4.2.0",
     "eslint": "5.5.0",
     "eslint-config-airbnb-base": "13.1.0",
     "eslint-plugin-import": "2.14.0",
+    "mocha": "5.2.0",
     "nodemon": "1.18.4"
   },
   "dependencies": {

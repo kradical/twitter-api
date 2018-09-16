@@ -7,6 +7,8 @@
 
 The server will now be listening on port 3000.
 
+`$ npm test` will run the tests.
+
 ## Design Decisions
 
 I separated the data into two logical models, Users and Tweets. I used internal ids as primary keys because relying on external attributes being uniquely identifiable is spotty at best.
@@ -16,6 +18,8 @@ To import the data I decided to batch process the file. This is because a simple
 One thing I noticed while importing was that I was getting duplicate tweet_id's which led me to realize that the tweet_id's are big integers. So I used a custom drop in replacement for JSON.parse and changed the column types in the database.
 
 I chose to use postgres because I am familiar with it and it has a fairly powerful document based text search feature. I used objection.js as an ORM because I haven't used it before and wanted to try it out. It is built on top of the knex query building library which allows you to drop down to a robust, powerful query builder very easily when needed. I chose to use express for routing / req/res lifecycle handling because it is so wildly popular, easy to use, and quick to get up and running.
+
+I also wrote some integration tests using mocha/chai/chai-http. These spin up the server inside the test and then hit it with requests and assert against the responses.
 
 ## API Documentation
 
@@ -36,6 +40,8 @@ These query parameters are all optional and can be mixed arbitrarily.
 These two routes can also control pagination with optional query parameters:
 * `page`: fetches a specific db page
 * `limit`: chooses page size, max of 1000
+
+Side note: tweet queries are ordered by createdAt because somewhat deterministic pagination is great.
 
 examples:
 
