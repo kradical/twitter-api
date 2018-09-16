@@ -1,71 +1,88 @@
-const querystring = require('querystring');
-const url = require('url');
-
 const Tweet = require('../models/Tweet');
 
-const parseRetweets = (req) => {
-  const retweetCount = Number(req.query.retweets);
+const parseRetweets = (retweets) => {
+  const retweetCount = Number(retweets);
 
-  const doesExist = ![undefined, null, ''].includes(req.query.retweets);
+  const doesExist = ![undefined, null, ''].includes(retweets);
   const isValidNumber = !Number.isNaN(retweetCount);
 
-  if (doesExist && isValidNumber) {
-    req.retweetCount = retweetCount;
-  }
+  return doesExist && isValidNumber
+    ? retweetCount
+    : undefined;
 };
 
-const parseDate = (req, field) => {
-  const date = new Date(req.query[field]);
+const parseDate = (dateString) => {
+  const date = new Date(dateString);
 
   const isValidDate = !Number.isNaN(date.getTime());
 
-  if (isValidDate) {
-    req[field] = date;
-  }
+  return isValidDate
+    ? date
+    : undefined;
 };
 
-const parseText = (req) => {
-  req.textQuery = req.query.query;
+const parseText = (textQueryString) => {
+  const isQueryValid = textQueryString && textQueryString !== '';
+
+  return isQueryValid
+    ? textQueryString
+    : undefined;
 };
 
-const parseTweetQueryRequest = (req, res, next) => {
-  parseRetweets(req);
-  parseDate(req, 'after');
-  parseDate(req, 'before');
-  parseText(req);
+const parseTweetQueryParams = (req) => {
+  const retweetCount = parseRetweets(req.query.retweets);
+  const after = parseDate(req.query.after);
+  const before = parseDate(req.query.before);
+  const textQuery = parseText(req.query.query);
 
-  return next();
+  return {
+    after,
+    before,
+    retweetCount,
+    textQuery,
+  };
 };
 
-const setupTweetQuery = (req, res, next) => {
-  req.tweetQuery = Tweet
+const executeTweetQuery = async (req, res, next) => {
+  const {
+    after,
+    before,
+    retweetCount,
+    textQuery,
+  } = parseTweetQueryParams(req);
+
+  const query = Tweet
     .query()
     .page(req.page, req.limit)
     .orderBy('createdAt');
 
-  if (typeof req.retweetCount === 'number') {
-    req.tweetQuery.where('retweetCount', '>', req.retweetCount);
+  if (typeof retweetCount === 'number') {
+    query.where('retweetCount', '>', retweetCount);
   }
 
-  if (req.after instanceof Date) {
-    req.tweetQuery.where('createdAt', '>', req.after);
+  if (after instanceof Date) {
+    query.where('createdAt', '>', after);
   }
 
-  if (req.before instanceof Date) {
-    req.tweetQuery.where('createdAt', '<', req.before);
+  if (before instanceof Date) {
+    query.where('createdAt', '<', before);
   }
 
-  if (typeof req.textQuery === 'string') {
-    req.tweetQuery.whereRaw('_search @@ plainto_tsquery(\'english\', ?)', [req.textQuery]);
+  if (typeof textQuery === 'string') {
+    query.whereRaw('_search @@ plainto_tsquery(\'english\', ?)', [textQuery]);
   }
 
-  return next();
-};
+  // user id can be set by previous middleware
+  if (typeof req.userId === 'number') {
+    query.where({ userId: req.userId });
+  }
 
-// separate the query execution so middleware can be injected in between.
-const makeTweetQuery = async (req, res, next) => {
+
   try {
-    res.tweets = await req.tweetQuery;
+    const result = await query;
+
+    res.entities = result.results;
+    res.totalCount = result.total;
   } catch (err) {
     return next(err);
   }
@@ -73,42 +90,6 @@ const makeTweetQuery = async (req, res, next) => {
   return next();
 };
 
-const buildPageLink = (originalUrl, limit, page) => {
-  const parsedUrl = url.parse(originalUrl, true);
-
-  const newQuery = querystring.stringify({
-    ...parsedUrl.query,
-    limit,
-    page,
-  });
-
-  return `${parsedUrl.protocol}://${parsedUrl.host}${parsedUrl.pathname}?${newQuery}`;
-};
-
-const respondTweets = (req, res) => {
-  const originalUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
-  const { total } = res.tweets;
-
-  const lastPage = Math.floor(total / req.limit);
-  const prevPage = Math.max(req.page - 1, 0);
-  const nextPage = Math.min(req.page + 1, lastPage);
-
-  res.links({
-    first: buildPageLink(originalUrl, req.limit, 0),
-    prev: buildPageLink(originalUrl, req.limit, prevPage),
-    self: buildPageLink(originalUrl, req.limit, req.page),
-    next: buildPageLink(originalUrl, req.limit, nextPage),
-    last: buildPageLink(originalUrl, req.limit, lastPage),
-  });
-
-  res.set('Total-Count', total);
-
-  res.json(res.tweets.results);
-};
-
 module.exports = {
-  makeTweetQuery,
-  parseTweetQueryRequest,
-  respondTweets,
-  setupTweetQuery,
+  executeTweetQuery,
 };

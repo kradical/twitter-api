@@ -1,20 +1,18 @@
 const { Router } = require('express');
 
-const pagination = require('../../middlewares/pagination');
 const {
-  makeTweetQuery,
-  parseTweetQueryRequest,
-  respondTweets,
-  setupTweetQuery,
-} = require('../../middlewares/tweets');
+  parsePaginationQueryParams,
+  setPaginationHeaders,
+} = require('../../middlewares/pagination');
+const { respond } = require('../../middlewares/respond');
+const { executeTweetQuery } = require('../../middlewares/tweets');
 
 const router = new Router();
 
 router.get('/tweets',
-  pagination,
-  parseTweetQueryRequest,
-  setupTweetQuery,
-  makeTweetQuery,
-  respondTweets);
+  parsePaginationQueryParams,
+  executeTweetQuery,
+  setPaginationHeaders,
+  respond);
 
 module.exports = router;

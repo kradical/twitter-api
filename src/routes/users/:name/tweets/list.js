@@ -1,43 +1,43 @@
 const { Router } = require('express');
 
 const User = require('../../../../models/User');
-const pagination = require('../../../../middlewares/pagination');
 const {
-  makeTweetQuery,
-  parseTweetQueryRequest,
-  respondTweets,
-  setupTweetQuery,
-} = require('../../../../middlewares/tweets');
+  parsePaginationQueryParams,
+  setPaginationHeaders,
+} = require('../../../../middlewares/pagination');
+const { respond } = require('../../../../middlewares/respond');
+const { executeTweetQuery } = require('../../../../middlewares/tweets');
 
 const router = new Router();
 
-router.get('/users/:name/tweets',
-  pagination,
-  parseTweetQueryRequest,
-  setupTweetQuery,
-  async (req, res, next) => {
-    const screenName = req.params.name;
+const loadUser = async (req, res, next) => {
+  const screenName = req.params.name;
 
-    try {
-      const user = await User
-        .query()
-        .findOne({ screenName });
+  try {
+    const user = await User
+      .query()
+      .findOne({ screenName });
 
-      if (!user) {
-        return res.status(404).json({
-          message: 'User Not Found.',
-          status: 404,
-        });
-      }
-
-      req.tweetQuery.where({ userId: user.id });
-    } catch (err) {
-      next(err);
+    if (!user) {
+      return res.status(404).json({
+        message: 'User Not Found.',
+        status: 404,
+      });
     }
 
-    return next();
-  },
-  makeTweetQuery,
-  respondTweets);
+    req.userId = user.id;
+  } catch (err) {
+    next(err);
+  }
+
+  return next();
+};
+
+router.get('/users/:name/tweets',
+  parsePaginationQueryParams,
+  loadUser,
+  executeTweetQuery,
+  setPaginationHeaders,
+  respond);
 
 module.exports = router;

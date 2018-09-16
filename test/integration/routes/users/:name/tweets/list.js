@@ -61,6 +61,12 @@ describe('Getting a list of a users tweets', () => {
       assert.lengthOf(res.body, 1);
       assert.strictEqual(res.body[0].id, pastTweet.id);
     });
+
+    it('should not apply the filter when not a valid date', async () => {
+      const res = await requester.get(`/users/${user.screenName}/tweets?before=testeroni`);
+
+      assert.lengthOf(res.body, 4);
+    });
   });
 
   describe('filtering by after', () => {
@@ -69,6 +75,12 @@ describe('Getting a list of a users tweets', () => {
 
       assert.lengthOf(res.body, 1);
       assert.strictEqual(res.body[0].id, futureTweet.id);
+    });
+
+    it('should not apply the filter when not a valid date', async () => {
+      const res = await requester.get(`/users/${user.screenName}/tweets?after=testeroni`);
+
+      assert.lengthOf(res.body, 4);
     });
   });
 
@@ -79,6 +91,12 @@ describe('Getting a list of a users tweets', () => {
       assert.lengthOf(res.body, 1);
       assert.strictEqual(res.body[0].id, retweetedTweet.id);
     });
+
+    it('should not apply the filter when not a valid number', async () => {
+      const res = await requester.get(`/users/${user.screenName}/tweets?retweets=testeroni`);
+
+      assert.lengthOf(res.body, 4);
+    });
   });
 
   describe('filtering by text query', () => {
@@ -87,6 +105,12 @@ describe('Getting a list of a users tweets', () => {
 
       assert.lengthOf(res.body, 1);
       assert.strictEqual(res.body[0].id, textTweet.id);
+    });
+
+    it('should not apply the filter when empty', async () => {
+      const res = await requester.get(`/users/${user.screenName}/tweets?query=`);
+
+      assert.lengthOf(res.body, 4);
     });
   });
 });
