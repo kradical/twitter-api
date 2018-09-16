@@ -24,7 +24,7 @@ exports.up = knex => knex.schema
       .notNullable();
 
     table
-      .bigInteger('retweetCount')
+      .integer('retweetCount')
       .notNullable();
 
     table

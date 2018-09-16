@@ -10,7 +10,7 @@ require('../../src/app');
 const User = require('../../src/models/User');
 const Tweet = require('../../src/models/Tweet');
 
-const DATA_SOURCE = 'fixtures/chelsea_twitter.json';
+const DATA_SOURCE = 'data/chelsea_twitter.json';
 const input = fs.createReadStream(DATA_SOURCE);
 const lineReader = readline.createInterface({ input });
 

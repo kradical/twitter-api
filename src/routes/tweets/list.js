@@ -1,28 +1,20 @@
 const { Router } = require('express');
 
-const Tweet = require('../../models/Tweet');
 const pagination = require('../../middlewares/pagination');
-const { setupTweetQuery, respondTweets } = require('../../middlewares/tweets');
+const {
+  makeTweetQuery,
+  parseTweetQueryRequest,
+  respondTweets,
+  setupTweetQuery,
+} = require('../../middlewares/tweets');
 
 const router = new Router();
 
 router.get('/tweets',
   pagination,
+  parseTweetQueryRequest,
   setupTweetQuery,
-  async (req, res, next) => {
-    try {
-      res.tweets = await Tweet
-        .query()
-        .where('retweetCount', '>', req.retweetCount)
-        .where('createdAt', '>', req.after)
-        .where('createdAt', '<', req.before)
-        .page(req.page, req.limit);
-    } catch (err) {
-      return next(err);
-    }
-
-    return next();
-  },
+  makeTweetQuery,
   respondTweets);
 
 module.exports = router;

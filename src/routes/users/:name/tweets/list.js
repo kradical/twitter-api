@@ -1,14 +1,19 @@
 const { Router } = require('express');
 
-const Tweet = require('../../../../models/Tweet');
 const User = require('../../../../models/User');
 const pagination = require('../../../../middlewares/pagination');
-const { setupTweetQuery, respondTweets } = require('../../../../middlewares/tweets');
+const {
+  makeTweetQuery,
+  parseTweetQueryRequest,
+  respondTweets,
+  setupTweetQuery,
+} = require('../../../../middlewares/tweets');
 
 const router = new Router();
 
 router.get('/users/:name/tweets',
   pagination,
+  parseTweetQueryRequest,
   setupTweetQuery,
   async (req, res, next) => {
     const screenName = req.params.name;
@@ -25,19 +30,14 @@ router.get('/users/:name/tweets',
         });
       }
 
-      res.tweets = await Tweet
-        .query()
-        .where({ userId: user.id })
-        .where('retweetCount', '>', req.retweetCount)
-        .where('createdAt', '>', req.after)
-        .where('createdAt', '<', req.before)
-        .page(req.page, req.limit);
+      req.tweetQuery.where({ userId: user.id });
     } catch (err) {
       next(err);
     }
 
     return next();
   },
+  makeTweetQuery,
   respondTweets);
 
 module.exports = router;
