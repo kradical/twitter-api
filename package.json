@@ -11,7 +11,6 @@
     "db:import": "node scripts/db/import.js",
     "db:migrate": "knex migrate:latest",
     "start": "nodemon --exec node src/app.js",
-    "test:createdb": "",
     "test": "dropdb twitter_api_test --if-exists && createdb twitter_api_test && NODE_ENV=test knex migrate:latest && NODE_ENV=test mocha --recursive"
   },
   "keywords": [
@@ -23,7 +22,7 @@
   "license": "GPL-3.0",
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/kraical/twitter-api"
+    "url": "https://gitlab.com/kradical/twitter_api"
   },
   "engines": {
     "node": ">=10.0.0",

@@ -41,23 +41,23 @@ These two routes can also control pagination with optional query parameters:
 * `page`: fetches a specific db page
 * `limit`: chooses page size, max of 1000
 
-Side note: tweet queries are ordered by createdAt because somewhat deterministic pagination is great.
+>Side note: tweet queries are ordered by createdAt because somewhat deterministic pagination is great.
 
-examples:
+A few examples:
 
-GET `localhost:3000/users/testuser/tweets?query=test&after=2000-01-01T00:00:00.000Z&before=2100-01-01T00:00:00.000Z&retweets=0&page=2&limit=5`
+`GET localhost:3000/users/testuser/tweets?query=test&after=2000-01-01T00:00:00.000Z&before=2100-01-01T00:00:00.000Z&retweets=0&page=2&limit=5`
 
-Will get tweets with screenName `testuser`, matching text `test`, in the date range January 1st, 2000 - January 1st, 2100, with more than 0 retweets (exlusive). It will retrieve page 2 and limit to returning 5 tweets.
+Will get tweets with screenName "testuser", matching text "test", in the date range January 1st, 2000 - January 1st, 2100, with more than 0 retweets (exlusive). It will retrieve page 2 and limit to returning 5 tweets.
 
-GET `localhost:3000/tweets?query=test&after=2000-01-01T00:00:00.000Z&before=2100-01-01T00:00:00.000Z&retweets=0&page=2&limit=5`
+`GET localhost:3000/tweets?query=test&after=2000-01-01T00:00:00.000Z&before=2100-01-01T00:00:00.000Z&retweets=0&page=2&limit=5`
 
-Will get tweets matching text `test`, in the date range January 1st, 2000 - January 1st, 2100, with more than 0 retweets (exlusive). It will retrieve page 2 and limit to returning 5 tweets.
+Will get tweets matching text "test", in the date range January 1st, 2000 - January 1st, 2100, with more than 0 retweets (exlusive). It will retrieve page 2 and limit to returning 5 tweets.
 
 Paginated endpoints will also return pagination info in the response headers:
 * `Total-Count`: The total number of entities
 * `Link`: Machine-readable links to the first, previous, current, next and last pages
 
-I have added an insomnia export (`Insomnia_Export_2018-09-15.json`) to the project if you want to test it with the insomnia REST client.
+I have added an insomnia export (`Insomnia_Export_2018-09-15.json`) to the project if you want to test it with the [Insomnia REST client](https://insomnia.rest/).
 
 ## Challenge: 
 ### A small web service

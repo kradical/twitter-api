@@ -18,6 +18,15 @@ router.get('/tweets/:id',
   async (req, res, next) => {
     const tweetId = req.params.id;
 
+    const isInvalid = Number.isNaN(Number(tweetId));
+
+    if (isInvalid) {
+      return res.status(400).json({
+        message: 'Tweet id is not a valid number.',
+        status: 400,
+      });
+    }
+
     try {
       res.tweet = await Tweet
         .query()
