@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "express": "4.16.4",
-    "json-bigint": "0.3.0",
+    "json-bigint": "1.0.0",
     "knex": "0.19.5",
     "objection": "1.4.0",
     "objection-db-errors": "1.0.0",
